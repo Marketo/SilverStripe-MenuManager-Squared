@@ -1,0 +1,21 @@
+{
+    "name": "marketo/silverstripe-menumanager-squared",
+    "description": "SilverStripe MenuManager Squared",
+    "type": "silverstripe-module",
+    "keywords": ["silverstripe", "members", "default"],
+    "require": {
+        "silverstripe/framework": "3.*",
+        "composer/installers": "*"
+    },
+    "support": {
+        "issues": "https://github.com/Marketo/SilverStripe-MenuManager-Squared/issues"
+    },
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Nathan J. Brauer",
+            "email": "nathan@marketera.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}
