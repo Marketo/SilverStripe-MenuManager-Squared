@@ -19,7 +19,7 @@
         },
         {
             "name": "Brandon J. Marshall",
-            "email" "bmarshall@marketo.com"
+            "email": "bmarshall@marketo.com"
         }
     ],
     "minimum-stability": "dev"
