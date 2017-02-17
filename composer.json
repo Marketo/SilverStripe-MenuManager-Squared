@@ -5,7 +5,8 @@
     "keywords": ["silverstripe", "members", "default"],
     "require": {
         "silverstripe/framework": "3.*",
-        "composer/installers": "*"
+        "composer/installers": "*",
+        "heyday/silverstripe-menumanager": "~2.1.0"
     },
     "support": {
         "issues": "https://github.com/Marketo/SilverStripe-MenuManager-Squared/issues"
@@ -15,6 +16,10 @@
         {
             "name": "Nathan J. Brauer",
             "email": "nathan@marketera.com"
+        },
+        {
+            "name": "Brandon J. Marshall",
+            "email" "bmarshall@marketo.com"
         }
     ],
     "minimum-stability": "dev"
