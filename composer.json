@@ -6,7 +6,7 @@
     "require": {
         "silverstripe/framework": "3.*",
         "composer/installers": "*",
-        "heyday/silverstripe-menumanager": "~2.1.0"
+        "heyday/silverstripe-menumanager": "~2.2.1"
     },
     "support": {
         "issues": "https://github.com/Marketo/SilverStripe-MenuManager-Squared/issues"
