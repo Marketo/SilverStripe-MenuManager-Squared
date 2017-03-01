@@ -14,7 +14,7 @@ Create or edit a composer.json file in the root of your SilverStripe project, an
     }
 }
 ~~~
-After completing this step, navigate in Terminal or similar to the SilverStripe root directory and run `composer install` or `composer update` depending on whether or not you have composer already in use.
+After completing this step, navigate in Terminal or similar to the SilverStripe root directory and run `composer install` or `composer update marketo/silverstripe-menumanager-squared` depending on whether or not you have composer already in use.
 
 ## Usage ##
 ---
