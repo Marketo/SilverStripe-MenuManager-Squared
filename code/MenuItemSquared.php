@@ -17,37 +17,41 @@ class MenuItemSquared extends DataExtension
 
     public function updateCMSFields(FieldList $fields)
     {
-        $fields->push(new UploadField('Image', 'Image'));
+        if (!$this->owner->config()->disable_image) {
+            $fields->push(new UploadField('Image', 'Image'));
+        }
 
-        if ($this->owner->ID != null) {
-            $AllParentItems = $this->owner->getAllParentItems();
-            $TopMenuSet     = $this->owner->TopMenuSet();
-            $depth          = 1;
+        if (!$this->owner->config()->disable_hierarchy) {
+            if ($this->owner->ID != null) {
+                $AllParentItems = $this->owner->getAllParentItems();
+                $TopMenuSet     = $this->owner->TopMenuSet();
+                $depth          = 1;
 
-            if (
-                is_array(MenuSet::config()->{$TopMenuSet->Name}) &&
-                isset(MenuSet::config()->{$TopMenuSet->Name}['depth']) &&
-                is_numeric(MenuSet::config()->{$TopMenuSet->Name}['depth']) &&
-                MenuSet::config()->{$TopMenuSet->Name}['depth'] > 1
-            ) {
-                $depth = MenuSet::config()->{$TopMenuSet->Name}['depth'];
-            }
+                if (
+                    is_array(MenuSet::config()->{$TopMenuSet->Name}) &&
+                    isset(MenuSet::config()->{$TopMenuSet->Name}['depth']) &&
+                    is_numeric(MenuSet::config()->{$TopMenuSet->Name}['depth']) &&
+                    MenuSet::config()->{$TopMenuSet->Name}['depth'] > 1
+                ) {
+                    $depth = MenuSet::config()->{$TopMenuSet->Name}['depth'];
+                }
 
-            if (!empty($AllParentItems) && count($AllParentItems) > $depth) {
-                $fields->push(new LabelField('MenuItems', 'Max Sub Menu Depth Limit'));
+                if (!empty($AllParentItems) && count($AllParentItems) > $depth) {
+                    $fields->push(new LabelField('MenuItems', 'Max Sub Menu Depth Limit'));
+                } else {
+                    $fields->push(
+                        new GridField(
+                            'MenuItems',
+                            'Sub Menu Items',
+                            $this->owner->ChildItems(),
+                            $config = GridFieldConfig_RecordEditor::create()
+                        )
+                    );
+                    $config->addComponent(new GridFieldOrderableRows('Sort'));
+                }
             } else {
-                $fields->push(
-                    new GridField(
-                        'MenuItems',
-                        'Sub Menu Items',
-                        $this->owner->ChildItems(),
-                        $config = GridFieldConfig_RecordEditor::create()
-                    )
-                );
-                $config->addComponent(new GridFieldOrderableRows('Sort'));
+                $fields->push(new LabelField('MenuItems', 'Save This Menu Item Before Adding Sub Menu Items'));
             }
-        } else {
-            $fields->push(new LabelField('MenuItems', 'Save This Menu Item Before Adding Sub Menu Items'));
         }
     }
 
@@ -79,4 +83,10 @@ class MenuItemSquared extends DataExtension
         }
         parent::onBeforeWrite();
     }
+
+    public static function get_user_friendly_name() {
+        $title = Config::inst()->get(get_called_class(), 'user_friendly_title');
+        return $title ?: FormField::name_to_label(get_called_class());
+    }
+
 }

@@ -1,3 +1,7 @@
 MenuItem:
   extensions:
     - MenuItemSquared
+
+MenuAdmin:
+  extensions:
+    - MenuAdminSquared
