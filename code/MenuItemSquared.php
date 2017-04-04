@@ -4,6 +4,7 @@ class MenuItemSquared extends DataExtension
 {
 
     private static $db = [
+        'Name' => 'Varchar(255)',
     ];
 
     private static $has_one = [
@@ -24,19 +25,19 @@ class MenuItemSquared extends DataExtension
         if (!$this->owner->config()->disable_hierarchy) {
             if ($this->owner->ID != null) {
                 $AllParentItems = $this->owner->getAllParentItems();
-                $TopMenuSet     = $this->owner->TopMenuSet();
-                $depth          = 1;
+                $TopMenuSet = $this->owner->TopMenuSet();
+                $depth = 1;
 
                 if (
                     is_array(MenuSet::config()->{$TopMenuSet->Name}) &&
                     isset(MenuSet::config()->{$TopMenuSet->Name}['depth']) &&
                     is_numeric(MenuSet::config()->{$TopMenuSet->Name}['depth']) &&
-                    MenuSet::config()->{$TopMenuSet->Name}['depth'] > 1
+                    MenuSet::config()->{$TopMenuSet->Name}['depth'] >= 0
                 ) {
                     $depth = MenuSet::config()->{$TopMenuSet->Name}['depth'];
                 }
 
-                if (!empty($AllParentItems) && count($AllParentItems) > $depth) {
+                if (!empty($AllParentItems) && count($AllParentItems) >= $depth) {
                     $fields->push(new LabelField('MenuItems', 'Max Sub Menu Depth Limit'));
                 } else {
                     $fields->push(
@@ -76,7 +77,7 @@ class MenuItemSquared extends DataExtension
 
         while ($WorkingItem->ParentItemID && $WorkingItem->ParentItem() && $WorkingItem->ParentItem()->ID && !isset($ParentItems[$WorkingItem->ParentItem()->ID])) {
             $ParentItems[$WorkingItem->ID] = $WorkingItem->ParentItem();
-            $WorkingItem                   = $ParentItems[$WorkingItem->ID];
+            $WorkingItem = $ParentItems[$WorkingItem->ID];
         }
         return $ParentItems;
     }
@@ -86,12 +87,23 @@ class MenuItemSquared extends DataExtension
         if (!$this->owner->Sort) {
             $this->owner->Sort = MenuItem::get()->max('Sort') + 1;
         }
+        if ($this->owner->MenuTitle) {
+            $this->owner->Name = $this->owner->MenuTitle;
+        }
         parent::onBeforeWrite();
     }
 
-    public static function get_user_friendly_name() {
+    public function onBeforeDelete()
+    {
+        foreach ($this->owner->ChildItems() as $childItem){
+            $childItem->delete();
+        }
+        parent::onBeforeDelete();
+    }
+
+    public static function get_user_friendly_name()
+    {
         $title = Config::inst()->get(get_called_class(), 'user_friendly_title');
         return $title ?: FormField::name_to_label(get_called_class());
     }
-
 }
