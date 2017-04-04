@@ -5,3 +5,7 @@ MenuItem:
 MenuAdmin:
   extensions:
     - MenuAdminSquared
+
+MenuSet:
+  extensions:
+    - MenuSetSquared

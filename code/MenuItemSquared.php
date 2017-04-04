@@ -48,6 +48,11 @@ class MenuItemSquared extends DataExtension
                         )
                     );
                     $config->addComponent(new GridFieldOrderableRows('Sort'));
+                    $config->removeComponentsByType('GridFieldAddNewButton');
+                    $multiClass = new GridFieldAddNewMultiClass();
+                    $classes = ClassInfo::subclassesFor('MenuItem');
+                    $multiClass->setClasses($classes);
+                    $config->addComponent($multiClass);
                 }
             } else {
                 $fields->push(new LabelField('MenuItems', 'Save This Menu Item Before Adding Sub Menu Items'));
