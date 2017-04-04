@@ -13,6 +13,7 @@ class MenuSetSquared extends DataExtension
 
             $multiClass = new GridFieldAddNewMultiClass();
             $classes = ClassInfo::subclassesFor('MenuItem');
+//            TODO: Make class name in dropdown friendlier to read.
 //            $classes = array_combine(
 //                ClassInfo::dataClassesFor('MenuItem'),
 //                array_map(
