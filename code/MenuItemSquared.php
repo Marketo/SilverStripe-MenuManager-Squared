@@ -95,7 +95,7 @@ class MenuItemSquared extends DataExtension
 
     public function onBeforeDelete()
     {
-        foreach ($this->owner->ChildItems() as $childItem){
+        foreach ($this->owner->ChildItems() as $childItem) {
             $childItem->delete();
         }
         parent::onBeforeDelete();

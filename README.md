@@ -1,4 +1,4 @@
-# SilverStripe Menu Manger Squared #
+# SilverStripe Menu Manager Squared #
 
 ## Installation ##
 
@@ -48,19 +48,25 @@ Menu Manger Squared adds the following fields to MenuItem:
 1. ChildItems
 2. Image
 
+Separators can be identified by the class MenuItem_Separator
+
 ### Usage in template ###
 ~~~
 <% loop $MenuSet('YourMenuName').MenuItems %>
     <a href="$Link" class="$LinkingMode">$MenuTitle</a>
     <ul>
         <% loop $ChildItems %>
-            <li>
-                 <label>$MenuTitle</label>
-                 $Image
-                 <% loop $ChildItems %>
-                     <p><a href="$Link" class="$LinkingMode">$MenuTitle</a></p>
-                 <% end_loop %>
-             </li>
+            <% if $ClassName = 'MenuItem' %>
+                <li>
+                    <label>$MenuTitle</label>
+                    $Image
+                    <% loop $ChildItems %>
+                        <p><a href="$Link" class="$LinkingMode">$MenuTitle</a></p>
+                    <% end_loop %>
+                </li>
+            <% else_if $ClassName = 'MenuItem_Separator' %>
+                <hr>
+            <% end_if %>
         <% end_loop %>
     </ul>
 <% end_loop %>
