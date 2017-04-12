@@ -33,8 +33,10 @@ class MenuItem_Separator extends MenuItem implements PermissionProvider
     {
         $fields = new FieldList();
 
+        $message = $this->isInDB() ? 'This separator has already been created.' : 'Press "create" to add a new separator.';
+
         $fields->push(
-            new HeaderField('NothingToDo', 'There are no editable fields for separators.')
+            new HeaderField('NothingToDo', $message)
         );
 
         $this->extend('updateCMSFields', $fields);
