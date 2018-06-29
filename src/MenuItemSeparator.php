@@ -1,9 +1,18 @@
 <?php
 
+namespace Marketo\MenuManagerSquared;
+
+use Heyday\MenuManager\MenuItem;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\HeaderField;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Security\Permission;
+use SilverStripe\Security\PermissionProvider;
+
 /**
  * Class MenuItem
  */
-class MenuItem_Separator extends MenuItem implements PermissionProvider
+class MenuItemSeparator extends MenuItem implements PermissionProvider
 {
     /**
      * Title for this type of MenuItem to be displayed in the CMS

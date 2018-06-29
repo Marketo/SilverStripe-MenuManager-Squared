@@ -1,5 +1,17 @@
 <?php
 
+namespace Marketo\MenuManagerSquared;
+
+use Heyday\MenuManager\MenuItem;
+use Heyday\MenuManager\MenuSet;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\UploadField;
+use SilverStripe\Forms\LabelField;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
+use SilverStripe\Forms\GridField\GridFieldOrderableRows;
+use SilverStripe\Forms\GridField\GridFieldAddNewMultiClass;
+
 class MenuItemSquared extends DataExtension
 {
 
@@ -8,12 +20,12 @@ class MenuItemSquared extends DataExtension
     ];
 
     private static $has_one = [
-        'Image'      => 'Image',
-        'ParentItem' => 'MenuItem',
+        'Image'      => Image::class,
+        'ParentItem' => MenuItem::class,
     ];
 
     private static $has_many = [
-        'ChildItems' => 'MenuItem',
+        'ChildItems' => MenuItem::class,
     ];
 
     public function updateCMSFields(FieldList $fields)
@@ -51,7 +63,7 @@ class MenuItemSquared extends DataExtension
                     $config->addComponent(new GridFieldOrderableRows('Sort'));
                     $config->removeComponentsByType('GridFieldAddNewButton');
                     $multiClass = new GridFieldAddNewMultiClass();
-                    $classes = ClassInfo::subclassesFor('MenuItem');
+                    $classes = ClassInfo::subclassesFor(MenuItem::class);
                     $multiClass->setClasses($classes);
                     $config->addComponent($multiClass);
                 }

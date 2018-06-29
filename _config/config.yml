@@ -1,0 +1,11 @@
+Heyday\MenuManager\MenuItem:
+  extensions:
+    - MenuItemSquared
+
+Heyday\MenuManager\MenuAdmin:
+  extensions:
+    - MenuAdminSquared
+
+Heyday\MenuManager\MenuSet:
+  extensions:
+    - MenuSetSquared
