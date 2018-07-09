@@ -1,5 +1,12 @@
 <?php
 
+namespace Marketo\MenuManagerSquared;
+
+use SilverStripe\ORM\DataExtension;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldDeleteAction;
+use SilverStripe\Forms\GridField\GridFieldAddNewMultiClass;
+
 class MenuSetSquared extends DataExtension
 {
 

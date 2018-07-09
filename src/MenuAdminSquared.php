@@ -1,8 +1,11 @@
 <?php
 
+namespace Marketo\MenuManagerSquared;
+
+use SilverStripe\Admin\ModelAdmin;
+
 class MenuAdminSquared extends DataExtension
 {
-
     public function updateEditForm(CMSForm $form)
     {
         $fields = $form->Fields();
@@ -13,5 +16,4 @@ class MenuAdminSquared extends DataExtension
             $MenuSetConfig->removeComponentsByType('GridFieldAddNewButton');
         }
     }
-
 }

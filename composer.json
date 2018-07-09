@@ -1,13 +1,30 @@
 {
     "name": "marketo/silverstripe-menumanager-squared",
     "description": "SilverStripe MenuManager Squared",
-    "type": "silverstripe-module",
-    "keywords": ["silverstripe", "members", "default"],
+    "type": "silverstripe-vendormodule",
+    "keywords": ["silverstripe", "silverstripe 4", "menu manager"],
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/fractaslabs/silverstripe-menumanager"
+        }
+    ],
     "require": {
-        "silverstripe/framework": "3.*",
-        "composer/installers": "*",
-        "heyday/silverstripe-menumanager": "~2.2.1"
+        "heyday/menumanager": "dev-master",
+        "silverstripe/framework": "~4.0",
+        "silverstripe/vendor-plugin": "^1.0"
     },
+    "autoload": {
+    		"psr-4": {
+    			   "Marketo\\MenuManagerSquared\\": "src/"
+    		}
+  	},
+  	"extra": {
+        "installer-name": "menumanager-squared",
+        "branch-alias": {
+            "dev-master": "2.x-dev"
+        }
+  	},
     "support": {
         "issues": "https://github.com/Marketo/SilverStripe-MenuManager-Squared/issues"
     },
@@ -20,7 +37,12 @@
         {
             "name": "Brandon J. Marshall",
             "email": "bmarshall@marketo.com"
+        },
+        {
+            "name": "Petar Simic",
+            "email": "petar.simic@fractas.com"
         }
     ],
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

@@ -1,0 +1,11 @@
+Heyday\MenuManager\MenuItem:
+  extensions:
+    - Marketo\MenuManagerSquared\MenuItemSquared
+
+Heyday\MenuManager\MenuAdmin:
+  extensions:
+    - Marketo\MenuManagerSquared\MenuAdminSquared
+
+Heyday\MenuManager\MenuSet:
+  extensions:
+    - Marketo\MenuManagerSquared\MenuSetSquared
