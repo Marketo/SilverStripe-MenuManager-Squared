@@ -2,7 +2,7 @@
     "name": "marketo/silverstripe-menumanager-squared",
     "description": "SilverStripe MenuManager Squared",
     "type": "silverstripe-module",
-    "keywords": ["silverstripe", "members", "default"],
+    "keywords": ["silverstripe", "menu", "manager"],
     "require": {
         "silverstripe/framework": "3.*",
         "composer/installers": "*",
@@ -21,6 +21,5 @@
             "name": "Brandon J. Marshall",
             "email": "bmarshall@marketo.com"
         }
-    ],
-    "minimum-stability": "dev"
+    ]
 }

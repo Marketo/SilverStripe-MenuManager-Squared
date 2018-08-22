@@ -1,25 +1,25 @@
 <?php
 
+/**
+ * Class MenuSetSquared
+ *
+ * @see MenuSet
+ */
 class MenuSetSquared extends DataExtension
 {
+    private static $singular_name = 'Menu';
 
+    private static $plural_name = 'Menus';
+
+    /**
+     * @param FieldList $fields
+     */
     public function updateCMSFields(FieldList $fields)
     {
         $menuItem = $fields->dataFieldByName('MenuItems');
 
         if ($menuItem instanceof GridField) {
-            $menuItemConfig = $menuItem->getConfig();
-            $menuItemConfig->removeComponentsByType('GridFieldAddNewButton');
-
-            $multiClass = new GridFieldAddNewMultiClass();
-            $classes = ClassInfo::subclassesFor('MenuItem');
-
-            $multiClass->setClasses($classes);
-            $menuItemConfig->addComponent($multiClass);
-
-            $menuItemConfig->removeComponentsByType('GridFieldDeleteAction');
-            $menuItemConfig->addComponent(new GridFieldDeleteAction());
+            $menuItem->setConfig(new MenuItemSquaredGridFieldConfig());
         }
     }
-
 }
