@@ -1,8 +1,12 @@
 <?php
 
+/**
+ * Class MenuItemSquared
+ *
+ * @see MenuItem
+ */
 class MenuItemSquared extends DataExtension
 {
-
     private static $db = [
         'Name' => 'Varchar(255)',
     ];
@@ -16,6 +20,16 @@ class MenuItemSquared extends DataExtension
         'ChildItems' => 'MenuItem',
     ];
 
+    private static $summary_fields = [
+        'MenuTitle'   => 'Title',
+        'Page.Title'  => 'Page Title',
+        'Link'        => 'Link',
+        'IsNewWindow' => 'Open in New Window',
+    ];
+
+    /**
+     * @param FieldList $fields
+     */
     public function updateCMSFields(FieldList $fields)
     {
         if (!$this->owner->config()->disable_image) {
@@ -25,16 +39,17 @@ class MenuItemSquared extends DataExtension
         if (!$this->owner->config()->disable_hierarchy) {
             if ($this->owner->ID != null) {
                 $AllParentItems = $this->owner->getAllParentItems();
-                $TopMenuSet = $this->owner->TopMenuSet();
-                $depth = 1;
+                $topMenuSet = $this->owner->TopMenuSet();
+                $topMenuName = $topMenuSet->Name;
 
-                if (
-                    is_array(MenuSet::config()->{$TopMenuSet->Name}) &&
-                    isset(MenuSet::config()->{$TopMenuSet->Name}['depth']) &&
-                    is_numeric(MenuSet::config()->{$TopMenuSet->Name}['depth']) &&
-                    MenuSet::config()->{$TopMenuSet->Name}['depth'] >= 0
-                ) {
-                    $depth = MenuSet::config()->{$TopMenuSet->Name}['depth'];
+                $config = MenuSet::config();
+                $depth = 1;
+                if (is_array($config->$topMenuName) && isset($config->{$topMenuName}['depth'])) {
+                    $depth = $config->{$topMenuName}['depth'];
+                }
+
+                if (!is_numeric($depth) || $depth < 0) {
+                    $depth = 1;
                 }
 
                 if (!empty($AllParentItems) && count($AllParentItems) >= $depth) {
@@ -45,15 +60,9 @@ class MenuItemSquared extends DataExtension
                             'MenuItems',
                             'Sub Menu Items',
                             $this->owner->ChildItems(),
-                            $config = GridFieldConfig_RecordEditor::create()
+                            new MenuItemSquaredGridFieldConfig()
                         )
                     );
-                    $config->addComponent(new GridFieldOrderableRows('Sort'));
-                    $config->removeComponentsByType('GridFieldAddNewButton');
-                    $multiClass = new GridFieldAddNewMultiClass();
-                    $classes = ClassInfo::subclassesFor('MenuItem');
-                    $multiClass->setClasses($classes);
-                    $config->addComponent($multiClass);
                 }
             } else {
                 $fields->push(new LabelField('MenuItems', 'Save This Menu Item Before Adding Sub Menu Items'));
@@ -61,15 +70,22 @@ class MenuItemSquared extends DataExtension
         }
     }
 
+    /**
+     * @return mixed
+     */
     public function TopMenuSet()
     {
         $AllParentItems = $this->owner->getAllParentItems();
         if (!empty($AllParentItems)) {
             return end($AllParentItems)->MenuSet();
         }
+
         return $this->owner->MenuSet();
     }
 
+    /**
+     * @return array
+     */
     public function getAllParentItems()
     {
         $WorkingItem = $this->owner;
@@ -79,6 +95,7 @@ class MenuItemSquared extends DataExtension
             $ParentItems[$WorkingItem->ID] = $WorkingItem->ParentItem();
             $WorkingItem = $ParentItems[$WorkingItem->ID];
         }
+
         return $ParentItems;
     }
 
@@ -101,9 +118,13 @@ class MenuItemSquared extends DataExtension
         parent::onBeforeDelete();
     }
 
+    /**
+     * @return string
+     */
     public static function get_user_friendly_name()
     {
         $title = Config::inst()->get(get_called_class(), 'user_friendly_title');
+
         return $title ?: FormField::name_to_label(get_called_class());
     }
 }

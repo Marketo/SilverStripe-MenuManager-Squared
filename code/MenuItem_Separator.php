@@ -1,12 +1,13 @@
 <?php
 
 /**
- * Class MenuItem
+ * Class MenuItem_Separator
  */
 class MenuItem_Separator extends MenuItem implements PermissionProvider
 {
     /**
      * Title for this type of MenuItem to be displayed in the CMS
+     *
      * @var string
      * @config
      */
@@ -14,6 +15,7 @@ class MenuItem_Separator extends MenuItem implements PermissionProvider
 
     /**
      * Disabling image field
+     *
      * @var boolean
      * @config
      */
@@ -21,6 +23,7 @@ class MenuItem_Separator extends MenuItem implements PermissionProvider
 
     /**
      * Disabling child fields
+     *
      * @var boolean
      * @config
      */
@@ -58,8 +61,7 @@ class MenuItem_Separator extends MenuItem implements PermissionProvider
         $this->Link = '';
         $this->IsNewWindow = 0;
 
-        $this->PageID  = 0;
+        $this->PageID = 0;
         $this->ImageID = 0;
     }
-
 }
