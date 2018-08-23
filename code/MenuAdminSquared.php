@@ -56,6 +56,7 @@ class MenuAdminSquared extends DataExtension
                 'IsNewWindow'  => 'IsNewWindow',
                 'Name'         => 'Name',
                 'PageID'       => 'PageID',
+                'MenuSetID'    => 'MenuSetID',
                 'ImageID'      => 'ImageID',
                 'ParentItemID' => 'ParentItemID',
             ]);
