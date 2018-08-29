@@ -3,6 +3,8 @@
 /**
  * Class MenuItemSquared
  *
+ * @method HasManyList ChildItems
+ * @method MenuItem ParentItem
  * @see MenuItem
  */
 class MenuItemSquared extends DataExtension
@@ -32,38 +34,40 @@ class MenuItemSquared extends DataExtension
      */
     public function updateCMSFields(FieldList $fields)
     {
-        if (!$this->owner->config()->disable_image) {
+        /** @var MenuItem|MenuItemSquared $owner */
+        $owner = $this->owner;
+        if (!$owner->config()->disable_image) {
             $fields->push(new UploadField('Image', 'Image'));
         }
 
-        if (!$this->owner->config()->disable_hierarchy) {
-            if ($this->owner->ID != null) {
-                $AllParentItems = $this->owner->getAllParentItems();
-                $topMenuSet = $this->owner->TopMenuSet();
+        if (!$owner->config()->disable_hierarchy) {
+            if ($owner->ID != null) {
+                $ascendants = $owner->getAllParentItems();
+                $topMenuSet = $owner->TopMenuSet();
                 $topMenuName = $topMenuSet->Name;
 
                 $config = MenuSet::config();
-                $depth = 1;
+                $maxDepth = 1;
                 if (is_array($config->$topMenuName) && isset($config->{$topMenuName}['depth'])) {
-                    $depth = $config->{$topMenuName}['depth'];
+                    $maxDepth = $config->{$topMenuName}['depth'];
                 }
 
-                if (!is_numeric($depth) || $depth < 0) {
-                    $depth = 1;
+                if (!is_numeric($maxDepth) || $maxDepth < 0) {
+                    $maxDepth = 1;
                 }
 
-                if (!empty($AllParentItems) && count($AllParentItems) >= $depth) {
-                    $fields->push(new LabelField('MenuItems', 'Max Sub Menu Depth Limit'));
-                } else {
-                    $fields->push(
-                        new GridField(
-                            'MenuItems',
-                            'Sub Menu Items',
-                            $this->owner->ChildItems(),
-                            new MenuItemSquaredGridFieldConfig()
-                        )
-                    );
+                $gridFieldConfig = new MenuItemSquaredGridFieldConfig();
+                if (count($ascendants) >= $maxDepth) {
+                    $fields->push(new LabelField('MenuItems', 'Max Depth Limit Reached, Update Config to Add Sub Menu Items'));
+                    $gridFieldConfig->removeComponentsByType(GridFieldAddNewMultiClass::class);
                 }
+                // Keep GridField in case of import or max depth changed.
+                $fields->push(new GridField(
+                    'MenuItems',
+                    'Sub Menu Items',
+                    $owner->ChildItems(),
+                    $gridFieldConfig
+                ));
             } else {
                 $fields->push(new LabelField('MenuItems', 'Save This Menu Item Before Adding Sub Menu Items'));
             }
@@ -71,32 +75,36 @@ class MenuItemSquared extends DataExtension
     }
 
     /**
-     * @return mixed
+     * @return MenuSet
      */
     public function TopMenuSet()
     {
-        $AllParentItems = $this->owner->getAllParentItems();
-        if (!empty($AllParentItems)) {
-            return end($AllParentItems)->MenuSet();
+        $ascendants = $this->owner->getAllParentItems();
+        if (!empty($ascendants)) {
+            return end($ascendants)->MenuSet();
         }
 
         return $this->owner->MenuSet();
     }
 
     /**
+     * Create a key value pair of ChildID => Parent relationships.
+     * Starts with itself, stops at circular relationships.
+     *
      * @return array
      */
     public function getAllParentItems()
     {
-        $WorkingItem = $this->owner;
-        $ParentItems = [];
+        /** @var MenuItem|MenuItemSquared $current */
+        $current = $this->owner;
+        $parents = [];
 
-        while ($WorkingItem->ParentItemID && $WorkingItem->ParentItem() && $WorkingItem->ParentItem()->ID && !isset($ParentItems[$WorkingItem->ParentItem()->ID])) {
-            $ParentItems[$WorkingItem->ID] = $WorkingItem->ParentItem();
-            $WorkingItem = $ParentItems[$WorkingItem->ID];
+        while ($current->ParentItemID && $current->ParentItem() && $current->ParentItem()->ID && !isset($parents[$current->ParentItem()->ID])) {
+            $parents[$current->ID] = $current->ParentItem();
+            $current = $parents[$current->ID];
         }
 
-        return $ParentItems;
+        return $parents;
     }
 
     public function onBeforeWrite()
@@ -112,6 +120,7 @@ class MenuItemSquared extends DataExtension
 
     public function onBeforeDelete()
     {
+        /** @var MenuItem $childItem */
         foreach ($this->owner->ChildItems() as $childItem) {
             $childItem->delete();
         }
