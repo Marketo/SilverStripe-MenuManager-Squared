@@ -1,5 +1,20 @@
 <?php
 
+namespace Marketo\Heyday\Extensions;
+
+use SilverStripe\Assets\Image;
+use Heyday\MenuManager\MenuSet;
+use Heyday\MenuManager\MenuItem;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\FormField;
+use SilverStripe\Forms\LabelField;
+use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\AssetAdmin\Forms\UploadField;
+use Symbiote\GridFieldExtensions\GridFieldAddNewMultiClass;
+use Marketo\Heyday\Extensions\MenuItemSquaredGridFieldConfig;
+
 /**
  * Class MenuItemSquared
  *
@@ -14,12 +29,12 @@ class MenuItemSquared extends DataExtension
     ];
 
     private static $has_one = [
-        'Image'      => 'Image',
-        'ParentItem' => 'MenuItem',
+        'Image'      => Image::class,
+        'ParentItem' => MenuItem::class,
     ];
 
     private static $has_many = [
-        'ChildItems' => 'MenuItem',
+        'ChildItems' => MenuItem::class,
     ];
 
     private static $summary_fields = [
@@ -65,7 +80,7 @@ class MenuItemSquared extends DataExtension
                 $fields->push(new GridField(
                     'MenuItems',
                     'Sub Menu Items',
-                    $owner->ChildItems(),
+                    $this->owner->ChildItems(),
                     $gridFieldConfig
                 ));
             } else {

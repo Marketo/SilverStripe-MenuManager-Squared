@@ -1,67 +1,32 @@
 <?php
 
+namespace Marketo\Heyday\Extensions;
+
+use SilverStripe\Forms\FieldList;
+use SilverStripe\ORM\DataExtension;
+use SilverStripe\Forms\GridField\GridField;
+use Marketo\Heyday\Extensions\MenuItemSquaredGridFieldConfig;
+
 /**
- * Class MenuItem_Separator
+ * Class MenuSetSquared
+ *
+ * @see MenuSet
  */
-class MenuItem_Separator extends MenuItem implements PermissionProvider
+class MenuSetSquared extends DataExtension
 {
-    /**
-     * Title for this type of MenuItem to be displayed in the CMS
-     *
-     * @var string
-     * @config
-     */
-    private static $user_friendly_title = 'Separator';
+    private static $singular_name = 'Menu';
+
+    private static $plural_name = 'Menus';
 
     /**
-     * Disabling image field
-     *
-     * @var boolean
-     * @config
+     * @param FieldList $fields
      */
-    private static $disable_image = true;
-
-    /**
-     * Disabling child fields
-     *
-     * @var boolean
-     * @config
-     */
-    private static $disable_hierarchy = true;
-
-    /**
-     * @return FieldList
-     */
-    public function getCMSFields()
+    public function updateCMSFields(FieldList $fields)
     {
-        $fields = new FieldList();
+        $menuItem = $fields->dataFieldByName('MenuItems');
 
-        $message = $this->isInDB() ? 'This separator has already been created.' : 'Press "create" to add a new separator.';
-
-        $fields->push(
-            new HeaderField('NothingToDo', $message)
-        );
-
-        $this->extend('updateCMSFields', $fields);
-
-        return $fields;
-    }
-
-    /**
-     * Checks to see if a page has been chosen and if so sets Link to null
-     * This means that used in conjunction with the __get method above
-     * calling $menuItem->Link won't return the Link field of this MenuItem
-     * but rather call the Link method on the associated Page
-     */
-    public function onBeforeWrite()
-    {
-        parent::onBeforeWrite();
-
-        $this->MenuTitle = '— Separator —';
-        $this->Link = '';
-        $this->IsNewWindow = 0;
-
-        $this->PageID = 0;
-        $this->ImageID = 0;
+        if ($menuItem instanceof GridField) {
+            $menuItem->setConfig(new MenuItemSquaredGridFieldConfig());
+        }
     }
 }

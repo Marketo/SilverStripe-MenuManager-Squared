@@ -1,5 +1,12 @@
 <?php
 
+namespace Marketo\Heyday\Extensions;
+
+use SilverStripe\Core\ClassInfo;
+use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
+use Symbiote\GridFieldExtensions\GridFieldAddNewMultiClass;
+use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
+
 /**
  * Class MenuItemSquaredGridFieldConfig
  */

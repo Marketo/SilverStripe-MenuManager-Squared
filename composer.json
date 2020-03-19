@@ -2,11 +2,15 @@
     "name": "marketo/silverstripe-menumanager-squared",
     "description": "SilverStripe MenuManager Squared",
     "type": "silverstripe-module",
-    "keywords": ["silverstripe", "menu", "manager"],
+    "keywords": [
+        "silverstripe",
+        "menu",
+        "manager"
+    ],
     "require": {
-        "silverstripe/framework": "3.*",
         "composer/installers": "*",
-        "heyday/silverstripe-menumanager": "~2.2.1"
+        "silverstripe/framework": "^4.5",
+        "heyday/silverstripe-menumanager": "^3.0"
     },
     "support": {
         "issues": "https://github.com/Marketo/SilverStripe-MenuManager-Squared/issues"
@@ -21,5 +25,19 @@
             "name": "Brandon J. Marshall",
             "email": "bmarshall@marketo.com"
         }
-    ]
+    ],
+    "extra": {
+        "project-files-installed": [
+            "app/.htaccess",
+            "app/_config.php",
+            "app/_config/mysite.yml",
+            "app/src/Page.php",
+            "app/src/PageController.php"
+        ],
+        "public-files-installed": [
+            ".htaccess",
+            "index.php",
+            "web.config"
+        ]
+    }
 }

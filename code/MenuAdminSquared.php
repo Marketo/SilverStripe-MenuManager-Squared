@@ -1,4 +1,13 @@
 <?php
+ 
+namespace Marketo\Heyday\Extensions;
+
+use SilverStripe\Forms\Form;
+use Heyday\MenuManager\MenuSet;
+use SilverStripe\ORM\DataExtension;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldExportButton;
+use Marketo\Heyday\Extensions\MenuItemSquaredGridFieldConfig;
 
 /**
  * Class MenuAdminSquared
@@ -18,7 +27,7 @@ class MenuAdminSquared extends DataExtension
     /**
      * @param CMSForm $form
      */
-    public function updateEditForm(CMSForm $form)
+    public function updateEditForm(Form $form)
     {
         $fields = $form->Fields();
         $menuSet = $fields->dataFieldByName('MenuSet');

@@ -1,5 +1,12 @@
 <?php
 
+namespace Marketo\Heyday\Extensions;
+
+use SilverStripe\Forms\FieldList;
+use SilverStripe\ORM\DataExtension;
+use SilverStripe\Forms\GridField\GridField;
+use Marketo\Heyday\Extensions\MenuItemSquaredGridFieldConfig;
+
 /**
  * Class MenuSetSquared
  *
