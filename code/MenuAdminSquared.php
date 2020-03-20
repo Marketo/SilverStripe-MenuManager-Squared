@@ -1,74 +1,32 @@
 <?php
- 
-namespace Marketo\Heyday\Extensions;
 
-use SilverStripe\Forms\Form;
-use Heyday\MenuManager\MenuSet;
+namespace Marketo\Heyday;
+
+use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\Forms\GridField\GridField;
-use SilverStripe\Forms\GridField\GridFieldExportButton;
-use Marketo\Heyday\Extensions\MenuItemSquaredGridFieldConfig;
+use Marketo\Heyday\MenuItemSquaredGridFieldConfig;
 
 /**
- * Class MenuAdminSquared
+ * Class MenuSetSquared
  *
- * @see MenuAdmin
+ * @see MenuSet
  */
-class MenuAdminSquared extends DataExtension
+class MenuSetSquared extends DataExtension
 {
-    private static $model_importers = [
-        'MenuItem' => 'CsvBulkLoader',
-    ];
+    private static $singular_name = 'Menu';
 
-    private static $managed_models = [
-        'MenuItem',
-    ];
+    private static $plural_name = 'Menus';
 
     /**
-     * @param CMSForm $form
+     * @param FieldList $fields
      */
-    public function updateEditForm(Form $form)
+    public function updateCMSFields(FieldList $fields)
     {
-        $fields = $form->Fields();
-        $menuSet = $fields->dataFieldByName('MenuSet');
+        $menuItem = $fields->dataFieldByName('MenuItems');
 
-        if ($menuSet instanceof GridField) {
-            $menuSet->setTitle('Menus');
-            $config = $menuSet->getConfig();
-
-            $config->removeComponentsByType('GridFieldExportButton');
-            $config->removeComponentsByType('GridFieldPrintButton');
-
-            // Only remove add button if set by config.
-            if (!empty(MenuSet::config()->get('default_sets'))) {
-                $config->removeComponentsByType('GridFieldAddNewButton');
-            }
-        }
-
-        $menuItems = $fields->dataFieldByName('MenuItem');
-        if ($menuItems instanceof GridField) {
-            $menuItems->setTitle('Items');
-            $config = new MenuItemSquaredGridFieldConfig();
-            $menuItems->setConfig($config);
-
-            $config->removeComponentsByType('GridFieldAddNewMultiClass');
-
-            $export = new GridFieldExportButton('buttons-before-left');
-            $config->addComponent($export);
-
-            $export->setExportColumns([
-                'ID'           => 'ID',
-                'ClassName'    => 'ClassName',
-                'MenuTitle'    => 'MenuTitle',
-                'Link'         => 'Link',
-                'Sort'         => 'Sort',
-                'IsNewWindow'  => 'IsNewWindow',
-                'Name'         => 'Name',
-                'PageID'       => 'PageID',
-                'MenuSetID'    => 'MenuSetID',
-                'ImageID'      => 'ImageID',
-                'ParentItemID' => 'ParentItemID',
-            ]);
+        if ($menuItem instanceof GridField) {
+            $menuItem->setConfig(new MenuItemSquaredGridFieldConfig());
         }
     }
 }

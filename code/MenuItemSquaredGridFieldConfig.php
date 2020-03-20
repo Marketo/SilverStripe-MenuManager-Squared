@@ -1,6 +1,6 @@
 <?php
 
-namespace Marketo\Heyday\Extensions;
+namespace Marketo\Heyday;
 
 use SilverStripe\Core\ClassInfo;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;

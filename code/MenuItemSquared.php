@@ -1,6 +1,6 @@
 <?php
 
-namespace Marketo\Heyday\Extensions;
+namespace Marketo\Heyday;
 
 use SilverStripe\Assets\Image;
 use Heyday\MenuManager\MenuSet;
@@ -13,7 +13,7 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use Symbiote\GridFieldExtensions\GridFieldAddNewMultiClass;
-use Marketo\Heyday\Extensions\MenuItemSquaredGridFieldConfig;
+use Marketo\Heyday\MenuItemSquaredGridFieldConfig;
 
 /**
  * Class MenuItemSquared
