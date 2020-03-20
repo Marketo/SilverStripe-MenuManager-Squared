@@ -41,8 +41,13 @@ class MenuItemSquared extends DataExtension
         'MenuTitle'   => 'Title',
         'Page.Title'  => 'Page Title',
         'Link'        => 'Link',
-        'IsNewWindow' => 'Open in New Window',
+        'IsNewWindowNice' => 'Opens in New Window',
     ];
+
+    public function IsNewWindowNice()
+    {
+        return $this->IsNewWindow ? 'Yes' : 'No';
+    }
 
     /**
      * @param FieldList $fields
