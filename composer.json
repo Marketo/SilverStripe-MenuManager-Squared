@@ -8,7 +8,6 @@
         "manager"
     ],
     "require": {
-        "composer/installers": "*",
         "silverstripe/framework": "^4.5",
         "heyday/silverstripe-menumanager": "^3.0"
     },
