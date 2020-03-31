@@ -1,85 +1,130 @@
 <?php
 
+namespace Marketo\Heyday;
+
+use SilverStripe\Assets\Image;
+use Heyday\MenuManager\MenuSet;
+use Heyday\MenuManager\MenuItem;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\FormField;
+use SilverStripe\Forms\LabelField;
+use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\AssetAdmin\Forms\UploadField;
+use Symbiote\GridFieldExtensions\GridFieldAddNewMultiClass;
+use Marketo\Heyday\MenuItemSquaredGridFieldConfig;
+
+/**
+ * Class MenuItemSquared
+ *
+ * @method HasManyList ChildItems
+ * @method MenuItem ParentItem
+ * @see MenuItem
+ */
 class MenuItemSquared extends DataExtension
 {
-
     private static $db = [
         'Name' => 'Varchar(255)',
     ];
 
     private static $has_one = [
-        'Image'      => 'Image',
-        'ParentItem' => 'MenuItem',
+        'Image'      => Image::class,
+        'ParentItem' => MenuItem::class,
     ];
 
     private static $has_many = [
-        'ChildItems' => 'MenuItem',
+        'ChildItems' => MenuItem::class,
     ];
 
+    private static $summary_fields = [
+        'MenuTitle'   => 'Title',
+        'Page.Title'  => 'Page Title',
+        'Link'        => 'Link',
+        'IsNewWindowNice' => 'Opens in New Window',
+    ];
+
+    public function IsNewWindowNice()
+    {
+        return $this->IsNewWindow ? 'Yes' : 'No';
+    }
+
+    /**
+     * @param FieldList $fields
+     */
     public function updateCMSFields(FieldList $fields)
     {
-        if (!$this->owner->config()->disable_image) {
+        /** @var MenuItem|MenuItemSquared $owner */
+        $owner = $this->owner;
+        if (!$owner->config()->disable_image) {
             $fields->push(new UploadField('Image', 'Image'));
         }
 
-        if (!$this->owner->config()->disable_hierarchy) {
-            if ($this->owner->ID != null) {
-                $AllParentItems = $this->owner->getAllParentItems();
-                $TopMenuSet = $this->owner->TopMenuSet();
-                $depth = 1;
+        if (!$owner->config()->disable_hierarchy) {
+            if ($owner->ID != null) {
+                $ascendants = $owner->getAllParentItems();
+                $topMenuSet = $owner->TopMenuSet();
+                $topMenuName = $topMenuSet->Name;
 
-                if (
-                    is_array(MenuSet::config()->{$TopMenuSet->Name}) &&
-                    isset(MenuSet::config()->{$TopMenuSet->Name}['depth']) &&
-                    is_numeric(MenuSet::config()->{$TopMenuSet->Name}['depth']) &&
-                    MenuSet::config()->{$TopMenuSet->Name}['depth'] >= 0
-                ) {
-                    $depth = MenuSet::config()->{$TopMenuSet->Name}['depth'];
+                $config = MenuSet::config();
+                $maxDepth = 1;
+                if (is_array($config->$topMenuName) && isset($config->{$topMenuName}['depth'])) {
+                    $maxDepth = $config->{$topMenuName}['depth'];
                 }
 
-                if (!empty($AllParentItems) && count($AllParentItems) >= $depth) {
-                    $fields->push(new LabelField('MenuItems', 'Max Sub Menu Depth Limit'));
-                } else {
-                    $fields->push(
-                        new GridField(
-                            'MenuItems',
-                            'Sub Menu Items',
-                            $this->owner->ChildItems(),
-                            $config = GridFieldConfig_RecordEditor::create()
-                        )
-                    );
-                    $config->addComponent(new GridFieldOrderableRows('Sort'));
-                    $config->removeComponentsByType('GridFieldAddNewButton');
-                    $multiClass = new GridFieldAddNewMultiClass();
-                    $classes = ClassInfo::subclassesFor('MenuItem');
-                    $multiClass->setClasses($classes);
-                    $config->addComponent($multiClass);
+                if (!is_numeric($maxDepth) || $maxDepth < 0) {
+                    $maxDepth = 1;
                 }
+
+                $gridFieldConfig = new MenuItemSquaredGridFieldConfig();
+                if (count($ascendants) >= $maxDepth) {
+                    $fields->push(new LabelField('MenuItems', 'Max Depth Limit Reached, Update Config to Add Sub Menu Items'));
+                    $gridFieldConfig->removeComponentsByType(GridFieldAddNewMultiClass::class);
+                }
+                // Keep GridField in case of import or max depth changed.
+                $fields->push(new GridField(
+                    'MenuItems',
+                    'Sub Menu Items',
+                    $this->owner->ChildItems(),
+                    $gridFieldConfig
+                ));
             } else {
                 $fields->push(new LabelField('MenuItems', 'Save This Menu Item Before Adding Sub Menu Items'));
             }
         }
     }
 
+    /**
+     * @return MenuSet
+     */
     public function TopMenuSet()
     {
-        $AllParentItems = $this->owner->getAllParentItems();
-        if (!empty($AllParentItems)) {
-            return end($AllParentItems)->MenuSet();
+        $ascendants = $this->owner->getAllParentItems();
+        if (!empty($ascendants)) {
+            return end($ascendants)->MenuSet();
         }
+
         return $this->owner->MenuSet();
     }
 
+    /**
+     * Create a key value pair of ChildID => Parent relationships.
+     * Starts with itself, stops at circular relationships.
+     *
+     * @return array
+     */
     public function getAllParentItems()
     {
-        $WorkingItem = $this->owner;
-        $ParentItems = [];
+        /** @var MenuItem|MenuItemSquared $current */
+        $current = $this->owner;
+        $parents = [];
 
-        while ($WorkingItem->ParentItemID && $WorkingItem->ParentItem() && $WorkingItem->ParentItem()->ID && !isset($ParentItems[$WorkingItem->ParentItem()->ID])) {
-            $ParentItems[$WorkingItem->ID] = $WorkingItem->ParentItem();
-            $WorkingItem = $ParentItems[$WorkingItem->ID];
+        while ($current->ParentItemID && $current->ParentItem() && $current->ParentItem()->ID && !isset($parents[$current->ParentItem()->ID])) {
+            $parents[$current->ID] = $current->ParentItem();
+            $current = $parents[$current->ID];
         }
-        return $ParentItems;
+
+        return $parents;
     }
 
     public function onBeforeWrite()
@@ -95,15 +140,20 @@ class MenuItemSquared extends DataExtension
 
     public function onBeforeDelete()
     {
+        /** @var MenuItem $childItem */
         foreach ($this->owner->ChildItems() as $childItem) {
             $childItem->delete();
         }
         parent::onBeforeDelete();
     }
 
+    /**
+     * @return string
+     */
     public static function get_user_friendly_name()
     {
         $title = Config::inst()->get(get_called_class(), 'user_friendly_title');
+
         return $title ?: FormField::name_to_label(get_called_class());
     }
 }

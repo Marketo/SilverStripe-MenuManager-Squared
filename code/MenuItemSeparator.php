@@ -1,12 +1,20 @@
 <?php
 
+namespace Marketo\Heyday;
+
+use Heyday\MenuManager\MenuItem;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\HeaderField;
+use SilverStripe\Security\PermissionProvider;
+
 /**
- * Class MenuItem
+ * Class MenuItemSeparator
  */
-class MenuItem_Separator extends MenuItem implements PermissionProvider
+class MenuItemSeparator extends MenuItem implements PermissionProvider
 {
     /**
      * Title for this type of MenuItem to be displayed in the CMS
+     *
      * @var string
      * @config
      */
@@ -14,6 +22,7 @@ class MenuItem_Separator extends MenuItem implements PermissionProvider
 
     /**
      * Disabling image field
+     *
      * @var boolean
      * @config
      */
@@ -21,6 +30,7 @@ class MenuItem_Separator extends MenuItem implements PermissionProvider
 
     /**
      * Disabling child fields
+     *
      * @var boolean
      * @config
      */
@@ -58,8 +68,7 @@ class MenuItem_Separator extends MenuItem implements PermissionProvider
         $this->Link = '';
         $this->IsNewWindow = 0;
 
-        $this->PageID  = 0;
+        $this->PageID = 0;
         $this->ImageID = 0;
     }
-
 }
